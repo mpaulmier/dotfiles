@@ -27,7 +27,7 @@ It will configure the following programs:
 To install this configuration run the following command:
 
 #+BEGIN_SRC sh
-git clone --recurse-submodules https://github.com/mattplm/dotfiles
+git clone https://github.com/mpaulmier/dotfiles
 # Go into the directory and run the install command
 cd dotfiles && ./install.sh
 #+END_SRC
