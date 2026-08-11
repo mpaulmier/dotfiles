@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-export PGPASSWORD=postgres
-for db in $(psql -U postgres -l | grep "test_"  | gawk -F\| '{ print $1 }')
-do
-    echo $db
-    dropdb -U postgres $db
-done
