@@ -81,6 +81,33 @@ end
 
 beautiful.init(gears.filesystem.get_themes_dir() .. theme_name .. "/theme.lua")
 
+-- The bundled themes use lucide SVGs for layout icons which require librsvg.
+-- Override them with the sky theme's PNG icons, recolored to match fg_normal.
+do
+   local layouts_dir = gears.filesystem.get_themes_dir() .. "default/layouts/"
+   local fg = beautiful.fg_normal
+   for key, file in pairs({
+      layout_tile       = "tile.png",
+      layout_tileleft   = "tileleft.png",
+      layout_tiletop    = "tiletop.png",
+      layout_tilebottom = "tilebottom.png",
+      layout_fairv      = "fairv.png",
+      layout_fairh      = "fairh.png",
+      layout_floating   = "floating.png",
+      layout_max        = "max.png",
+      layout_fullscreen = "fullscreen.png",
+      layout_magnifier  = "magnifier.png",
+      layout_spiral     = "spiral.png",
+      layout_dwindle    = "dwindle.png",
+      layout_cornernw   = "cornernw.png",
+      layout_cornerne   = "cornerne.png",
+      layout_cornersw   = "cornersw.png",
+      layout_cornerse   = "cornerse.png",
+   }) do
+      beautiful[key] = gears.color.recolor_image(layouts_dir .. file, fg)
+   end
+end
+
 -- Setup the menu/launcher with an "s" instead of AwesomeWM's "a".
 -- Same blocky style as beautiful.theme_assets.gen_awesome_name (the "s" letter
 -- is letter 3 in the "awesome" wordmark): a square filled with `fg`, with two
@@ -135,7 +162,7 @@ awful.input.xkb_layout  = "fr"
 -- Pointer / touchpad (libinput-backed; see awful.input for the full list).
 awful.input.tap_to_click      = 0
 awful.input.natural_scrolling = 0
-awful.input.pointer_speed     = 0.5
+awful.input.accel_speed        = 0.5
 
 -- Per-monitor fractional scaling.
 -- output.connect_signal("added", function(o)
@@ -206,19 +233,11 @@ menubar.utils.terminal = terminal
 tag.connect_signal("request::default_layouts", function()
                       awful.layout.append_default_layouts({
                             awful.layout.suit.tile,
-                            awful.layout.suit.tile.left,
-                            awful.layout.suit.tile.bottom,
-                            awful.layout.suit.tile.top,
-                            awful.layout.suit.carousel,
                             awful.layout.suit.fair,
-                            awful.layout.suit.fair.horizontal,
                             awful.layout.suit.max,
-                            awful.layout.suit.corner.nw,
                             awful.layout.suit.floating,
                             awful.layout.suit.spiral,
-                            awful.layout.suit.spiral.dwindle,
                             awful.layout.suit.max.fullscreen,
-                            awful.layout.suit.magnifier,
                       })
 end)
 
@@ -430,7 +449,13 @@ screen.connect_signal("request::desktop_decoration", function(s)
                                      layout = wibox.layout.fixed.horizontal,
                                      wibox.widget.systray(),
                                      separator,
-                                     s.mylayoutbox,
+                                     {
+                                        s.mylayoutbox,
+                                        forced_width  = dpi(20),
+                                        forced_height = dpi(20),
+                                        valign        = "center",
+                                        widget        = wibox.container.place,
+                                     },
                                      separator,
                                      battery_widget,
                                   },
@@ -1042,10 +1067,15 @@ ruled.client.connect_signal("request::rules", function()
                                   id       = "floating",
                                   rule_any = {
                                      instance = { "pinentry" },
-                                     class    = { "Blueman-manager", "Gpick" },
+                                     class    = { "AdwBluetooth", "Gpick" },
                                      role     = { "pop-up" },
                                   },
-                                  properties = { floating = true }
+                                  properties = {
+                                     floating = true,
+                                     width = 600,
+                                     height = 400,
+                                     placement = awful.placement.centered,
+                                  }
                                }
 
                                -- Route nested wlroots compositors (e.g. headful integration tests) to the
@@ -1061,6 +1091,23 @@ ruled.client.connect_signal("request::rules", function()
                                   id         = "titlebars",
                                   rule_any   = { type = { "normal", "dialog" } },
                                   properties = { titlebars_enabled = true }
+                               }
+
+                               ruled.client.append_rule {
+                                  id         = "firefox",
+                                  rule       = { class = "firefox" },
+                                  properties = { tag = "web" },
+                                  callback = function(c)
+                                     local function apply_bitwarden(client)
+                                        if client.name and client.name:match("Bitwarden") then
+                                           client:disconnect_signal("property::name", apply_bitwarden)
+                                           client.floating = true
+                                           client:geometry({ width = 400, height = 600 })
+                                           awful.placement.centered(client)
+                                        end
+                                     end
+                                     c:connect_signal("property::name", apply_bitwarden)
+                                  end,
                                }
 end)
 
