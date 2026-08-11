@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
 
-TMPBG='/tmp/screen.png'
-RES=1920x1080
+TMPBG="$HOME/Images/wallpapers/lockscreen.png"
 
-scrot "$TMPBG"
-
-convert "$TMPBG" -blur 2x10 "$TMPBG"
-
-i3lock -i "$TMPBG" && systemctl suspend
+exec i3lock -n -i "$TMPBG"
 
 rm -f "$TMPBG"
