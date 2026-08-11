@@ -19,7 +19,8 @@ properly:
 It will configure the following programs:
 
 - [[https://www.gnu.org/software/bash/][GNU Bash]]
-- The [[awesomewm.org][Awesome Window Manager]]
+- +The [[awesomewm.org][Awesome Window Manager]]+
+- The [[https://somewm.org][Some Window Manager]]
 
 * Usage
 
