@@ -1,0 +1,24 @@
+{
+  "runtime": {
+    "version": "LuaJIT"
+  },
+  "diagnostics": {
+    "globals": [
+      "awesome",
+      "client",
+      "screen",
+      "tag",
+      "mouse",
+      "root",
+      "dbus",
+      "mymainmenu",
+      "mylauncher"
+    ]
+  },
+  "workspace": {
+    "library": [
+      "/nix/store/71ihb6m88gz9zzm7s638a8qwrm8nlgiq-somewm-dev/share/somewm/lua"
+    ],
+    "checkThirdParty": false
+  }
+}

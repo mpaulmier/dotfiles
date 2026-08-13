@@ -14,7 +14,9 @@
       devShells.${system}.default = pkgs.mkShell {
         packages = [
           pkgs.luajit          # LuaJIT — same runtime SomeWM uses
+          pkgs.luaformatter
           pkgs.lua-language-server
+          pkgs.lua52Packages.luacheck
         ];
       };
     };
