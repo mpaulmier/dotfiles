@@ -149,9 +149,12 @@ _fzf_compgen_dir() {
 }
 
 # Roswell
-export PATH=$PATH:~/.roswell/bin
+export PATH=$PATH:~/.roswell/bin:~/.config/emacs/bin
 
 # Completions
 if command -v direnv; then
     eval "$(direnv hook bash)" &> /dev/null
 fi
+
+export ERL_AFLAGS="-kernel shell_history enabled"
+export PULSE_NODES="multicountry:es:be:nl:at:fr"

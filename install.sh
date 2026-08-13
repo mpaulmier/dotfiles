@@ -27,5 +27,7 @@ if [ ! -f "$HOME/.gitconfig" ]; then
 [user]
 	name = $NAME
 	email = $EMAIL
+[core]
+    excludesFile = ~/.gitignore
 " > $HOME/.gitconfig
 fi

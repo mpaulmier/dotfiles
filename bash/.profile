@@ -18,9 +18,23 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
+if [[ -d "/opt/homebrew/" ]]; then
+    export HOMEBREW_PREFIX="/opt/homebrew";
+    export HOMEBREW_CELLAR="/opt/homebrew/Cellar";
+    export HOMEBREW_REPOSITORY="/opt/homebrew";
+    export PATH="/opt/homebrew/bin:/opt/homebrew/sbin${PATH+:$PATH}";
+    export MANPATH="/opt/homebrew/share/man${MANPATH+:$MANPATH}:";
+    export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";
+fi
+
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.bin" ] ; then
     PATH="$HOME/.bin:$PATH"
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
 fi
 
 # set PATH so it includes user's private bin if it exists
@@ -29,12 +43,19 @@ if [ -d "$HOME/.local/bin" ] ; then
 fi
 
 if [ -d "$HOME/.pyenv" ]; then
-    export PATH="$HOME/.pyenv/bin:$PATH"
+    # If installed through the bash script
+    if [ -d "$HOME/.pyenv/bin" ]; then
+        export PATH="$HOME/.pyenv/bin:$PATH"
+    fi
     eval "$(pyenv init --path)"
 fi
 
 if [ -d "$HOME/n" ]; then
     export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"
+fi
+
+if [ -d "/usr/local/bin" ]; then
+    export PATH="/usr/local/bin:$PATH"
 fi
 
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
@@ -47,12 +68,13 @@ fi
 # Homebrew => macos
 if [ -f "$HOME/.asdf/asdf.sh" ]; then
     . "$HOME/.asdf/asdf.sh"
-    . "$HOME/.asdf/completions/asdf.bash"
+    if [ -f "$HOME/.asdf/completions/asdf.bash" ]; then
+        . "$HOME/.asdf/completions/asdf.bash"
+    fi
 elif [ -d "/opt/asdf-vm/" ]; then
     . "/opt/asdf-vm/asdf.sh"
 elif brew list asdf &> /dev/null; then
     . "$(brew --prefix asdf)/libexec/asdf.sh"
-    . "$(brew --prefix asdf)/etc/bash_completion.d/asdf.bash"
 fi
 
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
